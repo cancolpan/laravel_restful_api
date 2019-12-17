@@ -2,9 +2,11 @@
 
 namespace App;
 
+use App\User;
+use Illuminate\Support\Str;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -32,13 +34,9 @@ class User extends Authenticatable
         'verification_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
     public function isVerified()
     {
-        return $this->verified == User::VERIFIED_USER;
+        return $this->verified == User::ADMIN_USER;
     }
 
     public function isAdmin()
@@ -48,6 +46,6 @@ class User extends Authenticatable
 
     public static function generateVerificationCode()
     {
-        return srt_random(40);
+        return Str::random(40);
     }
 }
