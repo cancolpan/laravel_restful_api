@@ -68,7 +68,7 @@ class UserController extends ApiController
             }
             $user->admin = $request->admin;
         }
-        if (!$user->isDirty()){
+        if (!$user->isDirty()) {
             return response()->json(['error' => 'You need to specify a different value to update', 'code' => 422], 422);
         }
 
@@ -79,6 +79,9 @@ class UserController extends ApiController
 
     public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['data' => $user], 200);
     }
 }
