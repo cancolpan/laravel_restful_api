@@ -28,11 +28,18 @@ class CategoryController extends ApiController
      */
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'name' => 'required',
+            'description' => 'required',
+        ];
+        $this->validate($request, $rules);
+
+        $newCategory = Category::create($request->all());
+        return $this->showOne($newCategory, 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resource.x
      *
      * @param  \App\category  $category
      * @return \Illuminate\Http\Response
@@ -42,7 +49,7 @@ class CategoryController extends ApiController
         return $this->showOne($category);
     }
 
-    
+
 
     /**
      * Update the specified resource in storage.
