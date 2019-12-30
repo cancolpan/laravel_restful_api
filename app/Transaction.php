@@ -3,20 +3,26 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
 {
-    protected $fillable=[
-      'quantity',
-      'buyer_id',
-      'product_id'
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
+    protected $fillable = [
+        'quantity',
+        'buyer_id',
+        'product_id'
     ];
 
 
-    public function product(){
+    public function product()
+    {
         return $this->belongsTo(Product::class);
     }
-    public function buyer(){
+    public function buyer()
+    {
         return $this->belongsTo(Buyer::class);
     }
 }
