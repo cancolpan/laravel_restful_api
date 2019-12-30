@@ -8,7 +8,7 @@ use App\Http\Controllers\ApiController;
 
 class UserController extends ApiController
 {
-    
+
     public function index()
     {
         $users = User::get();
@@ -20,12 +20,12 @@ class UserController extends ApiController
     {
         $rules = [
             'name' => 'required',
-            'email'=> 'required|email|unique:users',
-            'password'=>'required|min:6|confirmed',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed',
         ];
         $this->validate($request, $rules);
 
-        $data= $request->all();
+        $data = $request->all();
         $data['password'] = bcrypt($request->password);
         $data['verified'] = User::UNVERIFIED_USER;
         $data['verification_token'] = User::generateVerificationCode();
@@ -35,20 +35,48 @@ class UserController extends ApiController
         return $this->showOne($user);
     }
 
-    
+
     public function show($id)
     {
-        $user= User::findOrFail($id);
+        $user = User::findOrFail($id);
         return $this->showOne($user);
     }
 
-  
+
     public function update(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $rules = [
+            'email' => 'email|unique:users, email,' . $user->id,
+            'password' => 'min:6|confirmed',
+            'admin' => 'in:' . User::ADMIN_USER . ',' . User::REGULAR_USER,
+        ];
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
+        if ($request->has('email') && $user->email != $request->email) {
+            $user->verified = User::UNVERIFIED_USER;
+            $user->verification_token = User::generateVerificationCode();
+            $user->email = $request->email;
+        }
+        if ($request->has('password')) {
+            $user->password = bcrypt($request->password);
+        }
+        if ($request->has('admin')) {
+            if (!$user->isVerified()) {
+                return response()->json(['error' => 'Only verified users can modify the admin field', 'code' => 409], 409);
+            }
+            $user->admin = $request->admin;
+        }
+        if (!$user->isDirty()){
+            return response()->json(['error' => 'You need to specify a different value to update', 'code' => 422], 422);
+        }
+
+        $user->save();
+        return response()->json(['data' => $user], 200);
     }
 
-    
+
     public function destroy($id)
     {
         //
