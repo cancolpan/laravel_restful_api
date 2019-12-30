@@ -13,12 +13,12 @@ class BuyerController extends ApiController
     {
         $buyers = Buyer::has('transactions')->get();
 
-        return response()->json(['data' => $buyers], 200);
+        return $this->showAll($buyers); // from ApiResponder trait
     }
 
     public function show($id)
     {
         $buyer = Buyer::has('transactions')->findOrFail($id);
-        return response()->json(['data' => $buyer], 200);
+        return $this->showOne($buyer); // from ApiResponder trait
     }
 }
