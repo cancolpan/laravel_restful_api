@@ -37,9 +37,9 @@ class CategoryController extends ApiController
      * @param  \App\category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(category $category)
+    public function show(Category $category)
     {
-        //
+        return $this->showOne($category);
     }
 
     
@@ -51,7 +51,7 @@ class CategoryController extends ApiController
      * @param  \App\category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, category $category)
+    public function update(Request $request, Category $category)
     {
         //
     }
@@ -62,7 +62,7 @@ class CategoryController extends ApiController
      * @param  \App\category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(category $category)
+    public function destroy(Category $category)
     {
         //
     }
