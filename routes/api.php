@@ -21,6 +21,7 @@ Route::resource('products', 'Product\ProductController', ['only' => ['index', 's
 
 //Sellers
 Route::resource('sellers', 'Seller\SellerController', ['only' => ['index', 'show']]);
+Route::resource('sellers.transaction', 'Seller\SellerTransactionController', ['only' => ['index']]);
 
 //Transactions
 Route::resource('transactions', 'Transaction\TransactionController', ['only' => ['index', 'show']]);
