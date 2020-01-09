@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use App\Mail\UserCreated;
 use App\User;
 use App\Product;
+use App\Mail\UserCreated;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
