@@ -34,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
         User::created(function ($user) {
             Mail::to($user)->send(new UserCreated($user));
         });
+
+
         Product::updated(function ($product) {
             if ($product->quantity == 0 && $product->isAvailable()) {
                 $product->status = Product::UNAVAILABLE_PRODUCT;
