@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Controllers\Transaction\TransactionController;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -9,6 +10,7 @@ class Transaction extends Model
 {
     use SoftDeletes;
 
+    public $transformer = TransactionController::class;
     protected $dates = ['deleted_at'];
     protected $fillable = [
         'quantity',
