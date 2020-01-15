@@ -7,6 +7,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 
 trait ApiResponser
 {
@@ -31,6 +32,7 @@ trait ApiResponser
         $collection = $this->sortData($collection, $transformer);
         $collection = $this->paginate($collection);
         $collection = $this->transformData($collection, $transformer);
+        $collection = $this->cacheResponse($collection);
 
         return $this->successResponse($collection, $code);
     }
@@ -75,24 +77,24 @@ trait ApiResponser
     {
 
         $rules = [
-            'per_page'=>'integer|min:2|max:50',
+            'per_page' => 'integer|min:2|max:50',
         ];
-        Validator::validate(request()->all(),$rules);
+        Validator::validate(request()->all(), $rules);
 
         $page = LengthAwarePaginator::resolveCurrentPage();
 
         $perPage = 15;
 
-        if(request()->has('per_page')){
-            $perPage= (int)request()->per_page;
+        if (request()->has('per_page')) {
+            $perPage = (int) request()->per_page;
         }
 
-       
+
 
         $results = $collection->slice(($page - 1) * $perPage, $perPage)->values();
-    
-        $paginated = new LengthAwarePaginator($results, $collection->count(), $perPage, $page ,[
-            'path'=> Paginator::resolveCurrentPath(),
+
+        $paginated = new LengthAwarePaginator($results, $collection->count(), $perPage, $page, [
+            'path' => Paginator::resolveCurrentPath(),
         ]);
 
         $paginated->appends(request()->all());
@@ -105,5 +107,14 @@ trait ApiResponser
         $transformation = fractal($data, new $transformer);
 
         return $transformation->toArray();
+    }
+
+    protected function cacheResponse($data)
+    {
+        $url = request()->url();
+
+        return Cache::remember($url, 30 / 60, function () use ($data) {
+            return $data;
+        });
     }
 }
