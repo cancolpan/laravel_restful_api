@@ -1,6 +1,8 @@
 <?php
 
 
+//Auth::routes();
+
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
@@ -14,20 +16,12 @@ if ($options['register'] ?? true) {
 
 // Password Reset Routes...
 if ($options['reset'] ?? true) {
-    Route::resetPassword();
+    Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+    Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+    Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 }
 
-// Password Confirmation Routes...
-if (
-    $options['confirm'] ??
-    class_exists(Route::prependGroupNamespace('Auth\ConfirmPasswordController'))
-) {
-    Route::confirmPassword();
-}
 
-// Email Verification Routes...
-if ($options['verify'] ?? false) {
-    Route::emailVerification();
-}
 
 Route::get('/home', 'HomeController@index')->name('home');
